@@ -1,12 +1,12 @@
 [
   {"type": "function", "function": {
     "name": "code_run",
-    "description": "Code executor. Prefer python. Multi-call OK, use script param. Reply code block is executed if no script arg; prefer for single call to avoid escaping. No hardcoding bulk data",
+    "description": "Code executor. Prefer python. Multi-call OK, use script param. Reply code block is executed if no script arg; prefer for single call to avoid escaping. Default cwd is the project root, so temp/report.md writes to project temp/report.md. No hardcoding bulk data",
     "parameters": {"type": "object", "properties": {
       "script": {"type": "string", "description": "[Mutually exclusive] NEVER use this param when use reply code block."},
       "type": {"type": "string", "enum": ["python", "powershell"], "description": "Code type", "default": "python"},
       "timeout": {"type": "integer", "description": "in seconds", "default": 60},
-      "cwd": {"type": "string", "description": "Working directory, defaults to cwd"},
+      "cwd": {"type": "string", "description": "Working directory. Relative paths resolve from project root; defaults to project root"},
       "inline_eval": {"type": "boolean", "description": "DO NOT USE except explicitly specified."}}}
   }},
   {"type": "function", "function": {
@@ -29,10 +29,12 @@
   }},
   {"type": "function", "function": {
     "name": "file_write",
-    "description": "Create/overwrite/append files. HUGE edits ONLY. Content must in <file_content>...</file_content> in reply body BEFORE the file_write call (not args). Supports {{file:path:startLine:endLine}}, auto-expanded",
+    "description": "Create/overwrite/append files. HUGE edits ONLY. Prefer file_content arg for generated content; content arg or <file_content>...</file_content> in reply body also works. Supports {{file:path:startLine:endLine}}, auto-expanded",
     "parameters": {"type": "object", "properties": {
       "path": {"type": "string", "description": "File path"},
-      "mode": {"type": "string", "enum": ["overwrite", "append", "prepend"], "description": "Write mode", "default": "overwrite"}}}
+      "mode": {"type": "string", "enum": ["overwrite", "append", "prepend"], "description": "Write mode", "default": "overwrite"},
+      "file_content": {"type": "string", "description": "Content to write. Use this for most file_write calls"},
+      "content": {"type": "string", "description": "Alias of file_content"}}}
   }},
   {"type": "function", "function": {
     "name": "web_scan",

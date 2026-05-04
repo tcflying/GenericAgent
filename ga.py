@@ -270,7 +270,20 @@ class GenericAgentHandler(BaseHandler):
 
     def _get_abs_path(self, path):
         if not path: return ""
+        if os.path.isabs(path):
+            return os.path.abspath(path)
+        norm = path.replace("\\", "/").lstrip("./")
+        project_roots = ("temp/", "memory/", "docs/", "assets/", "frontends/", "reflect/", "plugins/")
+        if norm in ("temp", "memory", "docs", "assets", "frontends", "reflect", "plugins") or norm.startswith(project_roots):
+            return os.path.abspath(os.path.join(script_dir, norm))
         return os.path.abspath(os.path.join(self.cwd, path))   
+
+    def _get_project_abs_path(self, path):
+        if not path:
+            return script_dir
+        if os.path.isabs(path):
+            return os.path.abspath(path)
+        return os.path.abspath(os.path.join(script_dir, path))
 
     def _extract_code_block(self, response, code_type):
         code_type = {'python':'python|py', 'powershell':'powershell|ps1|pwsh', 'bash':'bash|sh|shell'}.get(code_type, re.escape(code_type))
@@ -285,8 +298,12 @@ class GenericAgentHandler(BaseHandler):
             code = self._extract_code_block(response, code_type)
             if not code: return StepOutcome("[Error] Code missing. Must use reply code block or 'script' arg.", next_prompt="\n")
         timeout = args.get("timeout", 60)
-        raw_path = os.path.join(self.cwd, args.get("cwd", './'))
-        cwd = os.path.normpath(os.path.abspath(raw_path))
+        # code_run is most often used for project automation. Run from repo root
+        # by default so paths like temp/report.md resolve as users expect.
+        raw_path = args.get("cwd")
+        cwd = self._get_project_abs_path(raw_path or ".")
+        if raw_path and not os.path.exists(cwd):
+            cwd = os.path.normpath(os.path.abspath(os.path.join(self.cwd, raw_path)))
         code_cwd = os.path.normpath(self.cwd)
         if code_type == 'python' and args.get("inline_eval"):
             ns = {'handler': self, 'parent': self.parent}
@@ -380,10 +397,14 @@ class GenericAgentHandler(BaseHandler):
             if blocks: return blocks[-1].strip()
             return None
         
-        blocks = extract_robust_content(response.content)
+        blocks = args.get("file_content")
+        if blocks is None:
+            blocks = args.get("content")
+        if blocks is None:
+            blocks = extract_robust_content(response.content)
         if not blocks:
-            yield f"[Status] ❌ 失败: 未在回复中找到<file_content>代码块内容\n"
-            return StepOutcome({"status": "error", "msg": "No content found. Put content inside <file_content>...</file_content> tags in your reply body before call file_write."}, next_prompt="\n")
+            yield f"[Status] ❌ 失败: 未在回复或参数中找到写入内容\n"
+            return StepOutcome({"status": "error", "msg": "No content found. Put content in file_content/content args, or inside <file_content>...</file_content> tags in your reply body before call file_write."}, next_prompt="\n")
         try:
             new_content = expand_file_refs(blocks, base_dir=self.cwd)
             if mode == "prepend":
