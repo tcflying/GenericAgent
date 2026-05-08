@@ -297,7 +297,8 @@ class GenericAgentHandler(BaseHandler):
         if not code:
             code = self._extract_code_block(response, code_type)
             if not code: return StepOutcome("[Error] Code missing. Must use reply code block or 'script' arg.", next_prompt="\n")
-        timeout = args.get("timeout", 60)
+        try: timeout = int(args.get("timeout", 60))
+        except: timeout = 60
         # code_run is most often used for project automation. Run from repo root
         # by default so paths like temp/report.md resolve as users expect.
         raw_path = args.get("cwd")
@@ -306,7 +307,7 @@ class GenericAgentHandler(BaseHandler):
             cwd = os.path.normpath(os.path.abspath(os.path.join(self.cwd, raw_path)))
         code_cwd = os.path.normpath(self.cwd)
         if code_type == 'python' and args.get("inline_eval"):
-            ns = {'handler': self, 'parent': self.parent}
+            ns = {'handler':self, 'parent':self.parent, 'history':json.dumps(self.parent.llmclient.backend.history)}
             old_cwd = os.getcwd()
             try:
                 os.chdir(cwd)
@@ -397,16 +398,16 @@ class GenericAgentHandler(BaseHandler):
             if blocks: return blocks[-1].strip()
             return None
         
-        blocks = args.get("file_content")
-        if blocks is None:
-            blocks = args.get("content")
-        if blocks is None:
-            blocks = extract_robust_content(response.content)
-        if not blocks:
+        content = args.get("file_content")
+        if content is None:
+            content = args.get("content")
+        if content is None:
+            content = extract_robust_content(response.content)
+        if not content:
             yield f"[Status] ❌ 失败: 未在回复或参数中找到写入内容\n"
             return StepOutcome({"status": "error", "msg": "No content found. Put content in file_content/content args, or inside <file_content>...</file_content> tags in your reply body before call file_write."}, next_prompt="\n")
         try:
-            new_content = expand_file_refs(blocks, base_dir=self.cwd)
+            new_content = expand_file_refs(content, base_dir=self.cwd)
             if mode == "prepend":
                 old = open(path, 'r', encoding="utf-8").read() if os.path.exists(path) else ""
                 open(path, 'w', encoding="utf-8").write(new_content + old)
@@ -525,7 +526,7 @@ class GenericAgentHandler(BaseHandler):
 ''' + get_global_memory()
         yield "[Info] Start distilling good memory for long-term storage.\n"
         path = './memory/memory_management_sop.md'
-        if os.path.exists(path): result = '自动读取L0内容：\n' + file_read(path, show_linenos=False)
+        if os.path.exists(path): result = 'This is L0:\n' + file_read(path, show_linenos=False)
         else: result = "Memory Management SOP not found. Do not update memory."
         return StepOutcome(result, next_prompt=prompt)
 
@@ -556,7 +557,7 @@ class GenericAgentHandler(BaseHandler):
             try: print(prompt)
             except: pass
         return prompt
-
+    
     def turn_end_callback(self, response, tool_calls, tool_results, turn, next_prompt, exit_reason):
         _c = re.sub(r'```.*?```|<thinking>.*?</thinking>', '', response.content, flags=re.DOTALL)
         rsumm = re.search(r"<summary>(.*?)</summary>", _c, re.DOTALL)
@@ -566,18 +567,18 @@ class GenericAgentHandler(BaseHandler):
             clean_args = {k: v for k, v in args.items() if not k.startswith('_')}
             summary = f"调用工具{tool_name}, args: {clean_args}"
             if tool_name == 'no_tool': summary = "直接回答了用户问题"
-            next_prompt += "\n[DANGER] 你遗漏了<summary>，必须按协议在每次回复中用<summary>中输出极简单行摘要" 
-        summary = smart_format(summary.replace('\n', ''), max_str_len=100)
+            next_prompt += "\n\n\nUSER: <summary>呢？？？！\n\n"
+        summary = smart_format(summary.replace('\n', ''), max_str_len=80)
         self.history_info.append(f'[Agent] {summary}')
         _plan = self._in_plan_mode()
         if turn % 65 == 0 and (not _plan):
-            next_prompt += f"\n\n[DANGER] 已连续执行第 {turn} 轮。你必须总结情况进行ask_user，不允许继续重试。"
+            next_prompt += f"\n\n[DANGER] 已连续执行第 {turn} 轮。必须总结情况进行ask_user，不允许继续重试。"
         elif turn % 7 == 0:
             next_prompt += f"\n\n[DANGER] 已连续执行第 {turn} 轮。禁止无效重试。若无有效进展，必须切换策略：1. 探测物理边界 2. 请求用户协助。如有需要，可调用 update_working_checkpoint 保存关键上下文。"
         elif turn % 10 == 0: next_prompt += get_global_memory()
 
         if _plan and turn >= 10 and turn % 5 == 0:
-            next_prompt = f"[Plan Hint] 你正在计划模式。必须 file_read({_plan}) 确认当前步骤，回复开头引用：📌 当前步骤：...\n\n" + next_prompt
+            next_prompt = f"[Plan Hint] 正在计划模式。必须 file_read({_plan}) 确认当前步骤，回复开头引用：📌 当前步骤：...\n\n" + next_prompt
         if _plan and turn >= 90: next_prompt += f"\n\n[DANGER] Plan模式已运行 {turn} 轮，已达上限。必须 ask_user 汇报进度并确认是否继续。"
 
         injkeyinfo = consume_file(self.parent.task_dir, '_keyinfo')
