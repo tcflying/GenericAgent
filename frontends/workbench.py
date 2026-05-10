@@ -368,6 +368,65 @@ pre {
     border-radius:var(--radius);
     padding:.65rem .75rem;
 }
+.ga-stylebar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    margin:0 0 .75rem;
+    padding:.52rem .65rem;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--panel);
+    box-shadow:var(--shadow);
+}
+.ga-stylebar b {
+    display:block;
+    font-family:var(--font-mono);
+    font-size:.78rem;
+}
+.ga-stylebar span {
+    color:var(--muted);
+    font-size:.78rem;
+}
+.ga-style-actions {
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+}
+.ga-style-actions a {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:30px;
+    padding:.22rem .62rem;
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--ink) !important;
+    text-decoration:none !important;
+    background:rgba(238,247,242,.055);
+    font-family:var(--font-mono);
+    font-size:.76rem;
+}
+.ga-style-actions a.is-active {
+    color:#06100e !important;
+    background:var(--cyan);
+    border-color:var(--cyan);
+}
+.ga-logbox {
+    max-height: 320px;
+    overflow: auto;
+    padding: .8rem .9rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(8,13,16,.72);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    box-shadow: var(--shadow);
+}
 @keyframes ga-enter {
     from { opacity:0; transform:translateY(10px); }
     to { opacity:1; transform:translateY(0); }
@@ -388,6 +447,290 @@ pre {
     .ga-title-row { align-items:flex-start; }
     .ga-mark { width:38px; height:38px; }
     .ga-chip { width:100%; justify-content:space-between; }
+}
+</style>
+"""
+
+PAPER_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+    --bg: #f4f1e8;
+    --ink: #161816;
+    --muted: #6f746b;
+    --line: #d8d2c4;
+    --panel: rgba(255, 253, 247, .86);
+    --panel-strong: #fffdf7;
+    --glass: rgba(255, 253, 247, .62);
+    --cyan: #0f766e;
+    --amber: #b86b22;
+    --blue: #2f5b8f;
+    --red: #b94032;
+    --green: #2f7d4f;
+    --shadow: 0 1px 0 rgba(22,24,22,.06), 0 18px 48px rgba(75, 67, 48, .10);
+    --radius: 8px;
+    --font-display: "Newsreader", Georgia, serif;
+    --font-mono: "JetBrains Mono", Consolas, monospace;
+}
+.stApp {
+    background:
+        linear-gradient(90deg, rgba(22,24,22,.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(22,24,22,.035) 1px, transparent 1px),
+        radial-gradient(circle at 18% 0%, rgba(184,107,34,.10), transparent 28rem),
+        radial-gradient(circle at 100% 12%, rgba(15,118,110,.09), transparent 26rem),
+        var(--bg) !important;
+    background-size: 28px 28px, 28px 28px, auto, auto, auto !important;
+    color: var(--ink) !important;
+}
+[data-testid="stHeader"] {
+    background: rgba(244,241,232,.86) !important;
+    border-bottom: 1px solid var(--line) !important;
+    backdrop-filter: blur(14px);
+}
+[data-testid="stSidebar"] {
+    background: rgba(232,226,211,.72) !important;
+    border-right: 1px solid var(--line) !important;
+}
+[data-testid="stSidebar"] * { color: var(--ink) !important; }
+[data-testid="stSidebar"] button {
+    min-height: 38px !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+    background: rgba(255,253,247,.72) !important;
+    box-shadow: none !important;
+}
+[data-testid="stSidebar"] [role="radiogroup"] {
+    padding: .3rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255,253,247,.58);
+}
+.block-container {
+    max-width: 1380px !important;
+    padding-top: 1.55rem !important;
+}
+h1, h2, h3, .ga-title, .ga-section-title {
+    font-family: var(--font-display) !important;
+    color: var(--ink) !important;
+    letter-spacing: 0 !important;
+}
+.stMarkdown, .stText, .stCaption, p, label, div {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+.ga-topline {
+    grid-template-columns: minmax(0,1fr) minmax(280px, 390px) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    background:
+        linear-gradient(135deg, rgba(255,253,247,.96), rgba(239,234,221,.82)),
+        var(--panel) !important;
+    box-shadow: var(--shadow) !important;
+    padding: 1rem 1.05rem !important;
+}
+.ga-topline:before {
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, #161816, #0f766e 42%, #b86b22) !important;
+}
+.ga-topline:after {
+    width: 260px !important;
+    height: 260px !important;
+    right: -96px !important;
+    top: -120px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(15,118,110,.09), transparent 66%) !important;
+}
+.ga-mark {
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 8px !important;
+    background: #161816 !important;
+    color: #fffdf7 !important;
+    box-shadow: none !important;
+    border: 1px solid #161816 !important;
+}
+.ga-title {
+    font-size: clamp(1.9rem, 3.2vw, 3rem) !important;
+    line-height: .94 !important;
+}
+.ga-subtitle, .ga-path, .ga-small, .ga-muted, .ga-stat span {
+    color: var(--muted) !important;
+}
+.ga-path, .ga-chip, .ga-code, code, pre {
+    font-family: var(--font-mono) !important;
+}
+.ga-chipbox {
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+    background: rgba(255,253,247,.70) !important;
+    padding: .45rem !important;
+}
+.ga-chip {
+    border-radius: 6px !important;
+    border-color: var(--line) !important;
+    background: rgba(244,241,232,.76) !important;
+    color: var(--ink) !important;
+    min-height: 34px !important;
+}
+.ga-grid {
+    gap: .65rem !important;
+    margin: .75rem 0 .8rem !important;
+}
+.ga-stat, .ga-panel, div[data-testid="stMetric"], div[data-testid="stExpander"], [data-testid="stChatMessage"] {
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    background: var(--panel) !important;
+    box-shadow: var(--shadow) !important;
+    backdrop-filter: none !important;
+}
+.ga-stat {
+    min-height: 96px !important;
+    padding: .85rem .95rem !important;
+}
+.ga-stat:before {
+    width: 4px !important;
+    background: var(--ink) !important;
+}
+.ga-stat:after {
+    width: 86px !important;
+    height: 86px !important;
+    right: -28px !important;
+    top: -30px !important;
+    background: radial-gradient(circle, rgba(184,107,34,.16), transparent 65%) !important;
+}
+.ga-stat b {
+    font-size: clamp(1.55rem, 2.4vw, 2.15rem) !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 600 !important;
+}
+.ga-panel { padding: .85rem .95rem !important; }
+.ga-section-title {
+    font-size: 1.08rem !important;
+    font-weight: 650 !important;
+}
+.ga-section-title:before {
+    width: .5rem !important;
+    height: .5rem !important;
+    background: var(--ink) !important;
+    border-radius: 2px !important;
+    transform: rotate(45deg);
+}
+.ga-row {
+    border-top: 1px solid var(--line) !important;
+    padding: .56rem 0 !important;
+}
+.ga-pill-ok, .ga-pill-warn, .ga-pill-bad, .ga-pill-idle {
+    border-radius: 6px !important;
+    border: 1px solid currentColor !important;
+    background: transparent !important;
+    padding: .18rem .46rem !important;
+}
+.ga-pill-ok { color: #236b42 !important; }
+.ga-pill-warn { color: #8a561c !important; }
+.ga-pill-bad { color: #a2362d !important; }
+.ga-pill-idle { color: #60675d !important; }
+.stTabs [data-baseweb="tab-list"] {
+    gap: .15rem !important;
+    background: rgba(255,253,247,.68) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    padding: .28rem !important;
+    box-shadow: none !important;
+}
+.stTabs [data-baseweb="tab"] {
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    color: var(--muted) !important;
+    font-weight: 650 !important;
+    padding: .42rem .72rem !important;
+}
+.stTabs [aria-selected="true"] {
+    background: #161816 !important;
+    color: #fffdf7 !important;
+    border-color: #161816 !important;
+    box-shadow: none !important;
+}
+.stButton button, .stDownloadButton button {
+    border-radius: 8px !important;
+    min-height: 38px !important;
+    background: #fffdf7 !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: none !important;
+}
+.stButton button:hover, .stDownloadButton button:hover {
+    border-color: #161816 !important;
+    color: #161816 !important;
+}
+.stTextInput input, textarea, [data-baseweb="select"] > div {
+    border-radius: 8px !important;
+    border-color: var(--line) !important;
+    background: #fffdf7 !important;
+    color: var(--ink) !important;
+}
+pre {
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+    background: #f8f5ed !important;
+}
+.ga-code {
+    background: #f8f5ed !important;
+    color: var(--ink) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+}
+.ga-stylebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin: 0 0 .75rem;
+    padding: .52rem .65rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255,253,247,.72);
+    box-shadow: var(--shadow);
+}
+.ga-stylebar b {
+    font-family: var(--font-mono);
+    font-size: .78rem;
+}
+.ga-stylebar span {
+    color: var(--muted);
+    font-size: .78rem;
+}
+.ga-style-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+.ga-style-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: .22rem .62rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink) !important;
+    text-decoration: none !important;
+    background: rgba(255,253,247,.76);
+    font-family: var(--font-mono);
+    font-size: .76rem;
+}
+.ga-style-actions a.is-active {
+    color: #fffdf7 !important;
+    background: #161816;
+    border-color: #161816;
+}
+.ga-logbox {
+    background: #f8f5ed !important;
+    color: #252620 !important;
+    border-radius: 8px !important;
+}
+@media (max-width: 900px) {
+    .ga-topline { grid-template-columns: 1fr !important; }
 }
 </style>
 """
@@ -539,6 +882,27 @@ def read_text_file(rel_path, max_chars=50000):
     return text[:max_chars]
 
 
+def tail_text_file(rel_path, max_chars=12000):
+    path = project_path(rel_path)
+    if not path.exists() or not path.is_file():
+        return ""
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except Exception as exc:
+        return f"Unable to read file: {exc}"
+    return text[-max_chars:]
+
+
+def clean_runtime_log(text):
+    lines = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith(("Network URL:", "External URL:")):
+            continue
+        lines.append(line)
+    return "\n".join(lines).strip()
+
+
 def estimate_tokens(chars):
     return max(1, int(chars / 3.2)) if chars else 0
 
@@ -647,7 +1011,7 @@ def render_topline(agent, configs):
 def render_dashboard(agent, agent_error, configs):
     mem_files = scan_files("memory", ("*.md", "*.py", "*.txt"))
     docs = docs_index()
-    temp_logs = scan_files("temp", ("*.txt", "*.log", "*.json"), limit=50)
+    temp_logs = scan_files("temp", ("*.txt", "*.json"), limit=50)
     deps = ["requests", "bs4", "bottle", "streamlit", "webview"]
     dep_ok = sum(1 for d in deps if module_available(d))
     llm_configs = active_llm_configs(configs)
@@ -707,6 +1071,33 @@ def render_dashboard(agent, agent_error, configs):
 
     render_token_efficiency(token_eff)
     render_minimax_quota(configs)
+    render_dashboard_logs()
+
+
+def render_dashboard_logs():
+    st.markdown("### Runtime Log Stream")
+    log_files = [
+        ("Workbench", "temp/workbench.log"),
+        ("Errors", "temp/workbench.err.log"),
+        ("Web UI", "temp/webui.log"),
+        ("Web UI Errors", "temp/webui.err.log"),
+    ]
+    existing = [(name, path) for name, path in log_files if project_path(path).exists()]
+    if not existing:
+        st.caption("No runtime log file has been created yet.")
+        return
+    left, right = st.columns([1.4, .35])
+    with left:
+        selected = st.selectbox("Log source", [f"{name} - {path}" for name, path in existing], label_visibility="collapsed")
+    with right:
+        if st.button("Refresh logs", use_container_width=True):
+            st.rerun()
+    rel_path = existing[[f"{name} - {path}" for name, path in existing].index(selected)][1]
+    log_text = clean_runtime_log(tail_text_file(rel_path))
+    if not log_text.strip():
+        log_text = "(log file is empty)"
+    st.caption(f"Tail: {rel_path} · {datetime.now().strftime('%H:%M:%S')}")
+    st.markdown(f'<div class="ga-logbox">{html.escape(log_text)}</div>', unsafe_allow_html=True)
 
 
 def render_token_efficiency(token_eff):
@@ -977,15 +1368,58 @@ def render_logs():
     st.code(read_text_file(selected), language="text")
 
 
+def render_theme_controls():
+    if "wb_ui_style" not in st.session_state:
+        st.session_state.wb_ui_style = "Paperclip"
+    st.caption(f'UI style: {st.session_state.wb_ui_style}')
+    left, right = st.columns(2)
+    with left:
+        if st.button("Paperclip", use_container_width=True, disabled=st.session_state.wb_ui_style == "Paperclip"):
+            st.session_state.wb_ui_style = "Paperclip"
+            st.rerun()
+    with right:
+        if st.button("Neon Ops", use_container_width=True, disabled=st.session_state.wb_ui_style == "Neon Ops"):
+            st.session_state.wb_ui_style = "Neon Ops"
+            st.rerun()
+    return st.session_state.wb_ui_style
+
+
+def render_stylebar():
+    current = st.session_state.get("wb_ui_style", "Paperclip")
+    paper_cls = "is-active" if current == "Paperclip" else ""
+    neon_cls = "is-active" if current == "Neon Ops" else ""
+    st.markdown(
+        f"""
+<div class="ga-stylebar">
+  <div><b>UI STYLE</b><span>Current: {html.escape(current)}</span></div>
+  <div class="ga-style-actions">
+    <a class="{paper_cls}" href="?style=paper" target="_self">Paperclip</a>
+    <a class="{neon_cls}" href="?style=neon" target="_self">Neon Ops</a>
+  </div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
 def main():
+    style_param = st.query_params.get("style")
+    if style_param == "paper":
+        st.session_state.wb_ui_style = "Paperclip"
+    elif style_param == "neon":
+        st.session_state.wb_ui_style = "Neon Ops"
     st.markdown(CSS, unsafe_allow_html=True)
+    if st.session_state.get("wb_ui_style", "Paperclip") == "Paperclip":
+        st.markdown(PAPER_CSS, unsafe_allow_html=True)
     configs, _ = parse_mykey()
     agent, agent_error = init_agent()
+    render_stylebar()
     render_topline(agent, configs)
 
     with st.sidebar:
         st.markdown("### Workbench")
         st.caption("GenericAgent local control plane")
+        render_theme_controls()
         st.divider()
         if st.button("Refresh scans", use_container_width=True):
             st.cache_data.clear()
